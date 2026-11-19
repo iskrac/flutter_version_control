@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+//import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:file_saver/file_saver.dart';
@@ -57,11 +57,13 @@ class _CameraHomePageState extends State<CameraHomePage> {
     try {
       _cameras = await availableCameras();
       if (_cameras.isEmpty) {
-        throw CameraException('no_camera', 'No se encontró ninguna cámara disponible.');
+        throw CameraException(
+            'no_camera', 'No se encontró ninguna cámara disponible.');
       }
 
       final selectedIndex = cameraIndex ?? _preferredCameraIndex();
-      final camera = _cameras[selectedIndex.clamp(0, _cameras.length - 1).toInt()];
+      final camera =
+          _cameras[selectedIndex.clamp(0, _cameras.length - 1).toInt()];
       final oldController = _controller;
       _controller = CameraController(
         camera,
@@ -102,14 +104,16 @@ class _CameraHomePageState extends State<CameraHomePage> {
 
   Future<void> _takePicture() async {
     final controller = _controller;
-    if (controller == null || !controller.value.isInitialized || _takingPicture) return;
+    if (controller == null || !controller.value.isInitialized || _takingPicture)
+      return;
 
     setState(() => _takingPicture = true);
     try {
       final image = await controller.takePicture();
       if (mounted) setState(() => _capturedImage = image);
     } on CameraException catch (e) {
-      _showMessage('No se pudo tomar la fotografía: ${e.description ?? e.code}');
+      _showMessage(
+          'No se pudo tomar la fotografía: ${e.description ?? e.code}');
     } catch (e) {
       _showMessage('Error al capturar la imagen: $e');
     } finally {
@@ -124,7 +128,11 @@ class _CameraHomePageState extends State<CameraHomePage> {
     setState(() => _saving = true);
     try {
       final bytes = await image.readAsBytes();
-      final timestamp = DateTime.now().toIso8601String().replaceAll(':', '-').split('.').first;
+      final timestamp = DateTime.now()
+          .toIso8601String()
+          .replaceAll(':', '-')
+          .split('.')
+          .first;
       final filename = 'captura_$timestamp';
 
       // FileSaver descarga el archivo en web y lo guarda/expone para guardar en dispositivos.
@@ -171,7 +179,8 @@ class _CameraHomePageState extends State<CameraHomePage> {
                   ? null
                   : () {
                       final current = _cameras.indexOf(controller!.description);
-                      _initializeCamera(cameraIndex: (current + 1) % _cameras.length);
+                      _initializeCamera(
+                          cameraIndex: (current + 1) % _cameras.length);
                     },
               icon: const Icon(Icons.cameraswitch),
             ),
@@ -199,11 +208,14 @@ class _CameraHomePageState extends State<CameraHomePage> {
                   if (_capturedImage != null) ...[
                     Row(
                       children: [
-                        const Icon(Icons.check_circle_outline, color: Colors.green),
+                        const Icon(Icons.check_circle_outline,
+                            color: Colors.green),
                         const SizedBox(width: 8),
-                        const Expanded(child: Text('Captura lista para guardar')),
+                        const Expanded(
+                            child: Text('Captura lista para guardar')),
                         TextButton.icon(
-                          onPressed: () => setState(() => _capturedImage = null),
+                          onPressed: () =>
+                              setState(() => _capturedImage = null),
                           icon: const Icon(Icons.refresh),
                           label: const Text('Repetir'),
                         ),
@@ -217,23 +229,37 @@ class _CameraHomePageState extends State<CameraHomePage> {
                     children: [
                       Expanded(
                         child: FilledButton.icon(
-                          onPressed: _initializing || _takingPicture || controller?.value.isInitialized != true
+                          onPressed: _initializing ||
+                                  _takingPicture ||
+                                  controller?.value.isInitialized != true
                               ? null
                               : _takePicture,
                           icon: _takingPicture
-                              ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2))
                               : const Icon(Icons.camera_alt),
-                          label: Text(_takingPicture ? 'Capturando...' : 'Tomar foto'),
+                          label: Text(
+                              _takingPicture ? 'Capturando...' : 'Tomar foto'),
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: OutlinedButton.icon(
-                          onPressed: _capturedImage == null || _saving ? null : _savePicture,
+                          onPressed: _capturedImage == null || _saving
+                              ? null
+                              : _savePicture,
                           icon: _saving
-                              ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2))
                               : const Icon(Icons.save_alt),
-                          label: Text(_saving ? 'Guardando...' : 'Guardar captura'),
+                          label: Text(
+                              _saving ? 'Guardando...' : 'Guardar captura'),
                         ),
                       ),
                     ],
